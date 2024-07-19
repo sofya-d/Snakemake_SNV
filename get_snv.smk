@@ -1,10 +1,24 @@
 rule purify_reads:
 	input:
-		"{reads}.fastq"
+		# Trimmomatic works with gzip compressed FASTQ
+		"{reads}_1.fastq.gz",
+		"{reads}_2.fastq.gz"
 	output:
-		"{reads}_purified.fastq"
+		"{reads}_1_purified.fastq.gz",
+		temp("{reads}_1_unpaired.fastq.gz"),
+		"{reads}_2_purified.fastq.gz",
+		temp("{reads}_2_unpaired.fastq.gz")
 	shell:
-		"trimmomatic"
+		# Parameters from the "Quik Start" from README.md on GitHub are saved
+		"""
+		java -jar trimmomatic-0.39.jar \
+			PE {input} \ # PE - indicates paired-end input
+			{output} \
+			ILLUMINACLIP:TruSeq3-PE.fa:2:30:10:2:True \ # Cut Illumina adapters
+			LEADING:3 \ # minimum quality required to keep a base in the beginning of the read
+			TRAILING:3 \ # minimum quality required to keep a base in the end of the read
+			MINLEN:36" # Drop reads with length below a threshold
+		"""
 
 rule map_reads:
 	input:
