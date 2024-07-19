@@ -22,12 +22,24 @@ rule purify_reads:
 
 rule map_reads:
 	input:
-		"{reads}_purified.fastq",
-		"{genome}.fasta"
+		"{genome}" # Genome index prefix,
+		"{reads}_1_purified.fastq.gz",
+		"{reads}_2_purified.fastq.gz"
 	output:
 		"{genome}_{reads}.bam"
 	shell:
-		"BWA-MEM2"
+		"""
+		bwa-mem2 mem \
+		{input} \
+		-t 8 \
+		| \
+		samtools sort \
+		-@8 \
+		-l 9 \
+		-O BAM \
+		-o {output} \
+		- 
+		"""
 
 rule mark_duplicated_reads:
 	input:
