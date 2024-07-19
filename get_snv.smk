@@ -20,6 +20,22 @@ rule purify_reads:
 			MINLEN:36" # Drop reads with length below a threshold
 		"""
 
+rule index_genome:
+	input:
+		"{genome}.fasta.gz"
+	output:
+		"{genome}.0123",
+		"{genome}.amb",
+		"{genome}.ann",
+		"{genome}.bwt.2bit.64",
+		"{genome}.pac"
+	shell:
+		"""
+		bwa-mem2 index \
+		-p {genome} \ # Genome index prefix
+		{input} \
+		"""
+
 rule map_reads:
 	input:
 		"{genome}" # Genome index prefix,
