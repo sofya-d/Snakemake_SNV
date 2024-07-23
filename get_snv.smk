@@ -22,6 +22,7 @@ rule index_genome:
 	input:
 		"{genome}.fasta.gz"
 	output:
+		index_prefix = f"{path_to_index}/{wildcards.genome}"
 		"{genome}.0123",
 		"{genome}.amb",
 		"{genome}.ann",
@@ -29,7 +30,7 @@ rule index_genome:
 		"{genome}.pac"
 	shell:
 		"bwa-mem2 index "
-		"-p {genome} " # Genome index prefix
+		"-p {output.index_prefix} " # Genome index prefix
 		"{input}"
 
 rule map_reads:
