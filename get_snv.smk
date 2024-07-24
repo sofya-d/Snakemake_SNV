@@ -77,10 +77,3 @@ rule call_SNP_BCFtools:
 	output:
 	shell:
 		"bcftools"
-
-rule call_SNP_GATK:
-	input:
-		"{genome}_{reads}.bam"
-	output:
-	shell:
-		"GATK"
