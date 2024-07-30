@@ -43,20 +43,24 @@ rule map_reads:
 	shell:
 		"bwa-mem2 mem "
 		"{input} "
-		"-t 8 "
+		"-t 8 " # Number of threads.
 		"| "
 		"samtools sort "
-		"-@8 "
-		"-l 9 "
-		"-O BAM "
+		"--template-coordinate " # Sort by template-coordinate.
+		"--threads 8 "
+		"-l 9 " # Compression level, 9 is the highest.
+		"--output-fmt BAM "
 		"-o {output} "
 		"- "
 
 rule mark_duplicated_reads:
-	input:
-	output:
+	input: "{genome}_{reads}.bam"
+	output: "{genome}_{reads}_marked_dupl.bam"
 	shell:
-		"Picard tools"
+		"java -jar picard.jar MarkDuplicatesWithMateCigar " # Identifies duplicate reads, accounting for mate CIGAR.
+		"--INPUT {input} " # Input must be coordinate-sorted.
+		"--METRICS_FILE {output} " # File to write duplication metrics to.
+		"--OUTPUT {output}" # File with marked duplicate records.
 
 rule filter_mapped_reads:
 	input:
