@@ -64,7 +64,19 @@ rule mark_duplicated_reads:
 
 rule call_SNP_BCFtools:
 	input:
-		"{genome}_{reads}.bam"
+		bam = "{genome}_{reads}_marked_dupl.bam",
+		genome = "{genome}.fasta"
 	output:
+		"{genome}_{reads}.bcf"
 	shell:
-		"bcftools"
+		"bcftools mpileup "
+		"{input.bam} "
+		"--fasta-ref {input.genome} " # Faidx indexed reference sequence file.
+		"--output-type u " # "u" states for uncompressed BCF.
+		"--threads 8 "
+		"| "
+		"bcftools call "
+		"--output {output} "
+		"--output-type b " # "b" states for compressed BCF.
+		"--multiallelic-caller " # Alternative model for multiallelic and rare-variant calling (conflicts with -c).
+		"--variants-only " # Output variant sites only.
