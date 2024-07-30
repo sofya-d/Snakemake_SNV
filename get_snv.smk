@@ -62,19 +62,6 @@ rule mark_duplicated_reads:
 		"--METRICS_FILE {output} " # File to write duplication metrics to.
 		"--OUTPUT {output}" # File with marked duplicate records.
 
-rule filter_mapped_reads:
-	input:
-	output:
-	shell:
-		"KING"
-
-rule call_SNP_Samtools:
-	input:
-		"{genome}_{reads}.bam"
-	output:
-	shell:
-		"samtools"
-
 rule call_SNP_BCFtools:
 	input:
 		"{genome}_{reads}.bam"
