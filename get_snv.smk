@@ -62,6 +62,13 @@ rule mark_duplicated_reads:
 		"--METRICS_FILE {output} " # File to write duplication metrics to.
 		"--OUTPUT {output}" # File with marked duplicate records.
 
+rule index_genome:
+	input:
+		"{genome}.fasta"
+	shell:
+		"samtools faidx "
+		"{input}" # The input file can be compressed in the BGZF format.
+
 rule call_SNP_BCFtools:
 	input:
 		bam = "{genome}_{reads}_marked_dupl.bam",
